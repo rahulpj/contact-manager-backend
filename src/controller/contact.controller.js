@@ -70,4 +70,43 @@ const getContactById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { contact }, "Fetched the required contact"));
 });
 
-export { createContact, getContactsByUserId, getContactById };
+const deleteContactById = asyncHandler(async (req, res) => {
+  const _id = req.params["id"];
+  const response = await Contact.deleteOne({ _id });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Contact deleted successfully"));
+});
+
+const updateContactById = asyncHandler(async (req, res) => {
+  const _id = req.params["id"];
+  const { contactName, email, phone, addressLine1, city, state, pinCode } =
+    req.body;
+  const contact = await Contact.findById(_id);
+  if (!contact) {
+    throw new ApiError(404, "Contact not found");
+  }
+  if (String(contact.userId) !== String(req.user._id)) {
+    throw new ApiError(403, "You are not authorized to update this contact");
+  }
+
+  if (contactName) contact.contactName = contactName;
+  if (email) contact.email = email;
+  if (phone) contact.phone = phone;
+  if (addressLine1) contact.addressLine1 = addressLine1;
+  if (city) contact.city = city;
+  if (state) contact.state = state;
+  if (pinCode) contact.pinCode = pinCode;
+
+  const updateContact = await contact.save();
+  res.status(200, { updateContact }, "Contact updated successfully");
+});
+
+export {
+  createContact,
+  getContactsByUserId,
+  getContactById,
+  deleteContactById,
+  updateContactById,
+};
