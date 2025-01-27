@@ -1,7 +1,14 @@
 import dotenv from "dotenv";
 dotenv.config();
+import { v2 as cloudinary } from "cloudinary";
+cloudinary.config({
+  cloud_name: process.env.ClOUDINARY_CLOUD_NAME,
+  api_key: process.env.ClOUDINARY_CLOUD_KEY,
+  api_secret: process.env.ClOUDINARY_CLOUD_SECRET,
+});
 import { connectDB } from "./db/index.js";
 import { app } from "./app.js";
+
 try {
   await connectDB();
   console.log("MongoDB connection SUCCESS");

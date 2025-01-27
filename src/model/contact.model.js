@@ -22,6 +22,9 @@ const contactSchema = new mongoose.Schema(
     state: {
       type: String,
     },
+    pinCode: {
+      type: Number,
+    },
     imageUrl: {
       type: String,
     },
