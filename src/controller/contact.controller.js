@@ -45,4 +45,29 @@ const createContact = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, { contact }, "Contact created successfully"));
 });
 
-export { createContact };
+const getContactsByUserId = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  if (!userId) {
+    throw new ApiError(400, "Unauthorized");
+  }
+  const contacts = await Contact.find({ userId });
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { contacts },
+        "successfully fetched all the contacts"
+      )
+    );
+});
+
+const getContactById = asyncHandler(async (req, res) => {
+  const _id = req.query.id;
+  const contact = await Contact.findById({ _id });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { contact }, "Fetched the required contact"));
+});
+
+export { createContact, getContactsByUserId, getContactById };

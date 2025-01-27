@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { upload } from "../middleware/multer.middleware.js";
-import { createContact } from "../controller/contact.controller.js";
+import {
+  createContact,
+  getContactById,
+  getContactsByUserId,
+} from "../controller/contact.controller.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 
 const router = Router();
@@ -8,5 +12,11 @@ const router = Router();
 router
   .route("/create-contact")
   .post(verifyJWT, upload.single("imageFile"), createContact);
+
+router
+  .route("/getAllContactsByUser")
+  .get(verifyJWT, upload.none(), getContactsByUserId);
+
+router.route("/getContactById").get(verifyJWT, getContactById);
 
 export default router;
