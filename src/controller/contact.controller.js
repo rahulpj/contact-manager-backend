@@ -103,10 +103,33 @@ const updateContactById = asyncHandler(async (req, res) => {
   res.status(200, { updateContact }, "Contact updated successfully");
 });
 
+const searchContacts = asyncHandler(async (req, res) => {
+  const { q } = req.query;
+  const userId = req.user._id;
+  if (!q || q.trim() === "") {
+    throw new ApiError(400, "Search query is required");
+  }
+  const searchRegex = new RegExp(q, "i");
+  const searchQuery = {
+    userId,
+    $or: [
+      { contactName: { $regex: searchRegex } },
+      { email: { $regex: searchRegex } },
+      { phone: { $regex: searchRegex } },
+    ],
+  };
+
+  const contacts = await Contact.find(searchQuery).select("-__v");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { contacts }, "contacts fetched successfully"));
+});
+
 export {
   createContact,
   getContactsByUserId,
   getContactById,
   deleteContactById,
   updateContactById,
+  searchContacts,
 };
